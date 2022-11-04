@@ -1,2 +1,2 @@
-# b-together
-A social media platform for UW students, by UW students.
+# b-together: website
+This branch contains the code for an informational website about this project.
