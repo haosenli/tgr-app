@@ -1,10 +1,1 @@
-:root {
-    /* colors */
-    --brand-color: #000110;
-    --main-color: #fff;
-    --text-color-1: #fff;
-    --text-color-2: var(--brand-color);
-
-    /* navbar */
-    --navbar-height: 3.5rem;
-}
+@import '../../../global_constants.css';

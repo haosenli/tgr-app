@@ -1,11 +1,12 @@
 import React from "react";
 import Typewriter from "typewriter-effect";
 
-function Type() {
+function TypeAnimation() {
   return (
     <Typewriter
       options={{
         strings: [
+          "_",
           "Be",
           "Walk",
           "Study",
@@ -14,6 +15,7 @@ function Type() {
           "Eat",
           "Sleep",
           "Hang out",
+          "Party",
         ],
         autoStart: true,
         loop: true,
@@ -23,4 +25,4 @@ function Type() {
   );
 }
 
-export default Type;
+export default TypeAnimation;

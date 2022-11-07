@@ -1,20 +1,14 @@
 import * as React from 'react';
-import { Component } from 'react';
-import Type from "./type";
 
-interface Props {
-    
-}
+// component imports
+import TypeAnimation from "./type_animation";
  
-interface State {
-    
-}
- 
-class HomeRight extends React.Component<Props, State> {
-    // state = { :  }
+class HomeRight extends React.Component {
     render() { 
-        return ( 
-            <Type />
+        return (
+            <div id="home-right">
+                <TypeAnimation></TypeAnimation>
+            </div>
          );
     }
 }

@@ -1,15 +1,19 @@
 import React from 'react';
 
 // component imports
-import HomeLeft from './pages/home/components/home_left';
+import TopNav from './components/top_nav';
+import Home from './pages/home/home';
+// import { BrowserRouter as Router, Routes, Route}
+//     from 'react-router-dom';
 
 // style imports
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-        <HomeLeft></HomeLeft>
+    <div id="App">
+        {/* <Navbar /> */}
+        <Home />
     </div>
   );
 }

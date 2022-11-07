@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Component } from 'react';
 
 // style imports
 import '../styles/coming_soon.css';

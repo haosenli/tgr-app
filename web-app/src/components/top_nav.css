@@ -1,0 +1,7 @@
+@import '../global_constants.css';
+
+#top-nav {
+    height: var(--navbar-height);
+    display: flex;
+    
+}
