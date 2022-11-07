@@ -1,0 +1,32 @@
+@import './constants.css';
+
+#who-are-we {
+    font-size: 1.5rem;
+}
+
+#who-are-we h3 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+#who-are-we p {
+    margin: 0;
+}
+
+#meet-the-team {
+    color: var(--text-color-1);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+#meet-the-team p {
+    margin-right: 0.4rem;
+}
+
+#meet-the-team .bi-arrow-right-square-fill {
+    fill: white;
+    height: 1.5rem;
+    width: 1.5rem;
+}

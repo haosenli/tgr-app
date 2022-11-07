@@ -1,0 +1,6 @@
+@import './constants.css';
+
+#home-left {
+    background-color: var(--brand-color);
+    color: var(--text-color-1);
+}

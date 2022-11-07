@@ -1,0 +1,7 @@
+@import './constants.css';
+
+#navbar {
+    height: var(--navbar-height);
+    display: flex;
+    
+}
