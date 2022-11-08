@@ -1,13 +1,13 @@
 import * as React from 'react';
 
 // style imports
-import '../styles/who_are_we.css';
+import '../styles/about_us.css';
 
 class WhoAreWe extends React.Component {
     render() { 
         return (
-            <div id='who-are-we'>
-                <h3>WHO ARE WE?</h3>
+            <div id='about-us'>
+                <h3>ABOUT US</h3>
                 <p>We are a team of University of Washington students aiming to bring together the sense of community within college students through our social media platform, _together.</p>
                 <a href="#" id="meet-the-team"> 
                     <p>Meet the team. </p>

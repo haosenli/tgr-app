@@ -5,7 +5,7 @@ import '../styles/home_left.css';
 
 // Component imports
 import ComingSoon from './coming_soon';
-import WhoAreWe from './who_are_we';
+import WhoAreWe from './about_us';
  
 class HomeLeft extends React.Component {
     render() { 

@@ -11,8 +11,8 @@ import './App.css';
 
 function App() {
   return (
-    <div id="App">
-        {/* <Navbar /> */}
+    <div id='App' className='container'>
+        <TopNav />
         <Home />
     </div>
   );

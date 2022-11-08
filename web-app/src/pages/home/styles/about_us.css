@@ -1,15 +1,15 @@
 @import './constants.css';
 
-#who-are-we {
-    font-size: 1.5rem;
+#about-us {
+    font-size: var(--text-md);
 }
 
-#who-are-we h3 {
+#about-us h3 {
     margin-top: 3rem;
     margin-bottom: 1rem;
 }
 
-#who-are-we p {
+#about-us p {
     margin: 0;
 }
 
