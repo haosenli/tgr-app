@@ -6,7 +6,7 @@ import HomeRight from './components/home_right';
 
 function Home() {
   return (
-    <div id="home">
+    <div id='home' className='row'>
         <HomeLeft />
         <HomeRight />
     </div>

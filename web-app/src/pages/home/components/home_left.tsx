@@ -10,9 +10,9 @@ import WhoAreWe from './about_us';
 class HomeLeft extends React.Component {
     render() { 
         return ( 
-            <div id='home-left'>
-                <ComingSoon></ComingSoon>
-                <WhoAreWe></WhoAreWe>
+            <div id='home-left' className='col'>
+                <ComingSoon />
+                <WhoAreWe />
             </div>
         );
     }
