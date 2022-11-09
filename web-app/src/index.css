@@ -14,6 +14,34 @@ body {
   );
 }
 
+@media screen and (max-width: 992px) {
+    body {
+        background: var(--brand-color);
+    }
+}
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+    scrollbar-width: auto;
+    scrollbar-color: var(--text-color-1) var(--text-color-1);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 11px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #ffffff00;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--text-color-1);
+    border-radius: 10px;
+    border: 0px solid #ffffff00;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

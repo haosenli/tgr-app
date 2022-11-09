@@ -5,9 +5,19 @@
     font-weight: 600;
     grid-area: 'right';
     margin: auto;
+    color: var(--brand-color);
 }
 
 #home-right p {
     text-decoration: underline;
 }
 
+@media screen and (max-width: 992px) {
+    #home-right {
+        color: var(--text-color-1);
+        margin: 0;
+        margin-top: 4rem;
+        font-size: var(--text-xxl);
+        font-weight: 500;
+    }
+}

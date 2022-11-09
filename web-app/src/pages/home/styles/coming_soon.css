@@ -16,3 +16,9 @@ h2::-moz-selection {
     color: var(--brand-color);
     background: var(--text-color-1); /* Gecko Browsers */
 }
+
+@media screen and (max-width: 992px) {
+    h2.coming-soon {
+        font-size: var(--text-xxl);
+    }
+}

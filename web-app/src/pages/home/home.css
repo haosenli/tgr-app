@@ -6,3 +6,14 @@
     grid-template-columns: 1fr 1fr;
     gap: 7.5rem;
 }
+
+@media screen and (max-width: 992px) {
+    #home {
+        grid-template-areas: 
+            'left'
+            'right';
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 2rem;
+    }
+}
