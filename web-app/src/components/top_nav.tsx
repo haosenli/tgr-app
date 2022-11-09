@@ -10,7 +10,7 @@ class TopNav extends React.Component {
     render() { 
         return (
             <nav id='top-nav'>
-                <NavLogo></NavLogo>
+                <NavLogo />
             </nav>
         );
     }

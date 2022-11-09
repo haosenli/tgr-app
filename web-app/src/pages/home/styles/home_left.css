@@ -1,6 +1,8 @@
 @import './constants.css';
 
 #home-left {
-    background-color: var(--brand-color);
+    /* background-color: var(--brand-color); */
     color: var(--text-color-1);
+    grid-area: 'left';
+    margin-top: 14vh;
 }

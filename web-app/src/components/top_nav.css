@@ -2,6 +2,5 @@
 
 #top-nav {
     height: var(--navbar-height);
-    display: flex;
-    
+    z-index: 100;
 }

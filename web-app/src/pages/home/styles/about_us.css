@@ -13,6 +13,20 @@
     margin: 0;
 }
 
+h3::selection,
+p::selection,
+a::selection {
+    color: var(--brand-color);
+    background: var(--text-color-1); /* WebKit/Blink Browsers */
+}
+
+h3::selection,
+p::-moz-selection,
+a::-moz-selection {
+    color: var(--brand-color);
+    background: var(--text-color-1); /* Gecko Browsers */
+}
+
 #meet-the-team {
     color: var(--text-color-1);
     text-decoration: none;

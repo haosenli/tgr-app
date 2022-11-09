@@ -9,8 +9,9 @@ import TypeAnimation from "./type_animation";
 class HomeRight extends React.Component {
     render() { 
         return (
-            <div id='home-right' className='col'>
+            <div id='home-right'>
                 <TypeAnimation />
+                <p>together.</p>
             </div>
          );
     }

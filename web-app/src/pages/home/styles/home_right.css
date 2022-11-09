@@ -1,5 +1,13 @@
 @import './constants.css';
 
 #home-right {
-    font-size: var(--text-lg);
+    font-size: var(--text-xxxxl);
+    font-weight: 600;
+    grid-area: 'right';
+    margin: auto;
 }
+
+#home-right p {
+    text-decoration: underline;
+}
+

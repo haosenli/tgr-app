@@ -1,8 +1,17 @@
+@import 'global_constants.css';
+
 body {
   margin: 0;
   font-family: 'Roboto Slab', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(
+    90deg, 
+    var(--brand-color) 0%, 
+    var(--brand-color) 50%, 
+    var(--text-color-1) 50%, 
+    var(--text-color-1) 100%
+  );
 }
 
 code {

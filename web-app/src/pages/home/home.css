@@ -1,0 +1,8 @@
+@import '../../global_constants.css';
+
+#home {
+    display: grid;
+    grid-template-areas: 'left right';
+    grid-template-columns: 1fr 1fr;
+    gap: 7.5rem;
+}
