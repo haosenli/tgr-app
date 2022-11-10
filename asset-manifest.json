@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/b-together/static/css/main.59710849.css",
+    "main.js": "/b-together/static/js/main.54ff3d67.js",
+    "index.html": "/b-together/index.html",
+    "main.59710849.css.map": "/b-together/static/css/main.59710849.css.map",
+    "main.54ff3d67.js.map": "/b-together/static/js/main.54ff3d67.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.59710849.css",
+    "static/js/main.54ff3d67.js"
+  ]
+}
