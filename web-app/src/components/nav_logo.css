@@ -1,6 +1,6 @@
 @import '../global_constants.css';
 
-.nav-logo {
+/* .nav-logo {
     font-family: 'Zilla Slab', serif;
     font-size: var(--text-xxl);
     color: white;
@@ -15,7 +15,7 @@
 .nav-logo .tg {
     margin-top: -1.9rem;
     font-weight: 500;
-}
+} */
 
 #nav-logo {
     height: var(--navbar-height);

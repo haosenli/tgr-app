@@ -11,7 +11,7 @@ import './App.css';
 
 function App() {
   return (
-    <div id='App' className='container'>
+    <div id='App' className='container px-0 py-0'>
         <TopNav />
         <Home />
     </div>

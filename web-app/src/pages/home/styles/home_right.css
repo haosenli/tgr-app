@@ -10,13 +10,21 @@
 
 #home-right p {
     text-decoration: underline;
+    margin-top: -1.5rem;
+}
+
+/* text highlight color */
+@media screen and (min-width: 992px) {
+    #home-right *::selection {
+        color: var(--text-color-1);
+        background-color: var(--brand-color);
+    }
 }
 
 @media screen and (max-width: 992px) {
     #home-right {
         color: var(--text-color-1);
         margin: 0;
-        margin-top: 4rem;
         font-size: var(--text-xxl);
         font-weight: 500;
     }

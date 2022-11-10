@@ -5,6 +5,7 @@
     grid-template-areas: 'left right';
     grid-template-columns: 1fr 1fr;
     gap: 7.5rem;
+    height: calc(100vh - var(--navbar-height)) - var(--navbar-margin);
 }
 
 @media screen and (max-width: 992px) {
@@ -13,7 +14,14 @@
             'left'
             'right';
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-        gap: 2rem;
+        grid-template-rows: auto auto;
+        gap: 7rem;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    #home {
+        margin: 0 2rem;
+        gap: 4rem;
     }
 }

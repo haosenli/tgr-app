@@ -4,17 +4,7 @@ h2.coming-soon {
     font-size: var(--text-xxxl);
     font-weight: 600;
     margin: 0;
-    color: white;
-}
-
-h2::selection {
-    color: var(--brand-color);
-    background: var(--text-color-1); /* WebKit/Blink Browsers */
-}
-
-h2::-moz-selection {
-    color: var(--brand-color);
-    background: var(--text-color-1); /* Gecko Browsers */
+    color: var(--text-color-1);
 }
 
 @media screen and (max-width: 992px) {

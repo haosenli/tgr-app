@@ -5,6 +5,8 @@
     --text-color-1: #fff;
     --text-color-2: var(--brand-color);
 
+    /* === SIZING === */
+
     /* font sizes */
     --text-sm: 1rem;
     --text-md: 1.5rem;
@@ -15,5 +17,11 @@
     --text-xxxxl: 6rem;
 
     /* navbar */
-    --navbar-height: 3.5rem;
+    --navbar-height: 4.25rem;
+    --navbar-margin: 1rem;
+
+
+    /* page height */
+    --page-height: calc(100vh - var(--navbar-height)) - var(--navbar-margin);
+
 }

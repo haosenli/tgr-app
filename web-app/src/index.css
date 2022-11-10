@@ -20,6 +20,17 @@ body {
     }
 }
 
+/* Selection color */
+::selection {
+    color: var(--brand-color);
+    background: var(--text-color-1); /* WebKit/Blink Browsers */
+}
+
+::-moz-selection {
+    color: var(--brand-color);
+    background: var(--text-color-1); /* Gecko Browsers */
+}
+
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {

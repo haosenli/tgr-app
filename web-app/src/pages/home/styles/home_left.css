@@ -6,3 +6,15 @@
     grid-area: 'left';
     margin-top: 14vh;
 }
+
+@media screen and (max-width: 992px) {
+    #home-left {
+        margin-top: 6rem;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    #home-left {
+        margin-top: 4rem;
+    }
+}
