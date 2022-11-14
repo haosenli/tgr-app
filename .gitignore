@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# nodejs dependencies
+/web-app/node_modules
+/web-app/.pnp
+/web-app/.pnp.js
+
 # Distribution / packaging
 .Python
 build/
