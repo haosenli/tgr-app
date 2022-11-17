@@ -50,18 +50,20 @@ class UserNetwork:
         return result
     
     def create_user(self, 
-                    user_id: str,
+                    uw_net_id: str,
                     username: str,
                     password: str,
                     uw_email: str,
+                    phone_num: str,
                     user_info: dict[str, str]={}) -> None:
         """Create a new user in the database.
         
         Args:
-            user_id (str): Unique id of the new user.
+            uw_net_id (str): UW_Net id of the new user.
             username (str): The display name of the new user.
             password (str): The password of the new user.
             uw_email (str): The UW email of the new user.
+            phone_num (str): The phone number of the new user.
             user_info (dict): A dict containing additional information about the user.
             
         Returns:
@@ -69,7 +71,7 @@ class UserNetwork:
         """
         # TODO: Check if user exists
         encrypted_pw = encrypt.password(password)
-        query = f"CREATE (u:User{{user_id: '{user_id}', username: '{username}', password: '{encrypted_pw}', uw_email: '{uw_email}'}})"
+        query = f"CREATE (u:User{{uw_net_id: '{uw_net_id}', username: '{username}', password: '{encrypted_pw}', uw_email: '{uw_email}', phone_num: '{phone_num}'}})"
         self._database_query(query)
 
     def find_user(self, user_id: str):
@@ -104,10 +106,15 @@ if __name__ == "__main__":
     # sns.create_user('6', 'hai dang', '1234', 'hehehe')
     # sns.create_user('7', 'steven', '1234', 'hehehe')
     # sns.delete_user('3')
-    # sns.find_user('2')
-    with sns.driver.session() as session:
-        result = session.execute_read(sns.get_user, user_id='2')
-        for r in result:
-            print(r)
-        
+    sns.find_user('2')
+    # with sns.driver.session() as session:
+    #     result = session.execute_read(sns.get_user, user_id='2')
+    #     for r in result:
+    #         print(r)
+    # sns.delete_user("1")
+    # sns.delete_user("2")
+    # sns.delete_user("3")
+    # sns.delete_user("5")
+    # sns.delete_user("6")
+    sns.delete_user("7")
     sns.close()
