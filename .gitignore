@@ -132,3 +132,19 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+camera/node_modules/
+camera/.expo/
+camera/dist/
+camera/npm-debug.*
+camera/*.jks
+camera/*.p8
+camera/*.p12
+camera/*.key
+camera/*.mobileprovision
+camera/*.orig.*
+camera/web-build/
+
+# macOS
+camera/.DS_Store
