@@ -1,6 +1,12 @@
+# system imports
+import os
+from dotenv import load_dotenv 
+# Neo4j imports
 from neo4j import GraphDatabase
-from neo4j import Record
+from neo4j import Result
+# custom imports
 from utils import encrypt
+
 
 class UserNetwork:
     """The UserNetwork class...
@@ -27,14 +33,14 @@ class UserNetwork:
             print('[EXCEPTION] Connection to database failed.')
             print(e)
         
-    def _database_query(self, query: str) -> Record:
+    def _database_query(self, query: str) -> Result:
         """Executes the given Cypher query.
         
         Args:
             command (str): The Cypher query to execute.
         
         Returns:
-            Neo4j Record if successful, None otherwise.
+            Neo4j Result if successful, None otherwise.
         
         Exceptions:
             Throws an exception if the query caused an error.
@@ -71,7 +77,7 @@ class UserNetwork:
         """
         # TODO: Check if user exists
         encrypted_pw = encrypt.password(password)
-        query = f"CREATE (u:User{{uw_net_id: '{uw_net_id}', username: '{username}', password: '{encrypted_pw}', uw_email: '{uw_email}', phone_num: '{phone_num}'}})"
+        query = f"CREATE (u:User{{uw_netid: '{uw_net_id}', username: '{username}', password: '{encrypted_pw}', uw_email: '{uw_email}', phone_num: '{phone_num}'}})"
         self._database_query(query)
 
     def find_user(self, user_id: str):
@@ -80,7 +86,7 @@ class UserNetwork:
         print(result)
 
     def delete_user(self, user_id: str):
-        query = f"MATCH (n: User{{user_id: '{user_id}'}}) DELETE (n)"
+        query = f"MATCH (n: User{{uw_netid: '{user_id}'}}) DELETE (n)"
         self._database_query(query)
 
     def close(self):
@@ -93,37 +99,59 @@ class UserNetwork:
         
         
     def get_user(tx, user_id):
-        """Retrieve data from neo4j node"""
-        """
+        """Retrieve data from neo4j node
+        
         Args:
-            
             user_info (dict): A dict containing additional information about the user.
             
         Returns:
             None.
         """ 
         result = tx.run(f"MATCH (n: User{{user_id: '{user_id}'}}) RETURN (n.used_id)", user_id=user_id)
-        return result
+        return result.values("username")
 
+    def get_result(self, uw_netid: str):
+        def get_username(tx):
+            query = f'''
+                MATCH (n: User{{uw_netid: "{uw_netid}"}})
+                RETURN n.username AS username, n.uw_email AS email 
+                '''
+            result = tx.run(query)
+            keys = ['username', 'email']
+            results = []
+            for key in keys:
+                print(key)
+                results.append(result.value(key))
+            return results
+        with self.driver.session() as session:
+            result = session.execute_read(get_username)
+        return result
+        
 if __name__ == "__main__":
-    sns = UserNetwork('bolt://localhost:7687', 'neo4j', '1234')
-    sns.create_user('1', 'haosen', '1234', 'hehehe')
-    sns.create_user('2', 'andrew', '1234', 'hehehe')
-    sns.create_user('3', 'peter', '1234', 'hehehe')
-    sns.create_user('4', 'alan', '1234', 'hehehe')
-    sns.create_user('5', 'anthony', '1234', 'hehehe')
-    sns.create_user('6', 'hai dang', '1234', 'hehehe')
-    sns.create_user('7', 'steven', '1234', 'hehehe')
-    sns.delete_user('3')
-    # sns.find_user('2')
-    # with sns.driver.session() as session:
-    #     result = session.execute_read(sns.get_user, user_id='2')
-    #     for r in result:
-    #         print(r)
+    # load secrets
+    env_path = os.path.join(os.getcwd(), '.env')
+    load_dotenv(env_path)
+
+    # load credentials and connect to Neo4j database
+    n4j_uri = os.getenv('NEO4J_URI')
+    n4j_user = os.getenv('NEO4J_USERNAME')
+    n4j_pw = os.getenv('NEO4J_PASSWORD')
+    
+    sns = UserNetwork(n4j_uri, n4j_user, n4j_pw)
+    # sns.create_user('1', 'haosen', '1234', 'haosen@uw.edu', '1234567890')
+    # sns.create_user('2', 'andrew', '1234', 'andrew@uw.edu', '1234567890')
+    # sns.create_user('3', 'peter', '1234', 'peter@uw.edu', '1234567890')
+    # sns.create_user('4', 'alan', '1234', 'alan@uw.edu', '1234567890')
+    # sns.create_user('5', 'anthony', '1234', 'anthony@uw.edu', '1234567890')
+    # sns.create_user('6', 'hai dang', '1234', 'haidang@uw.edu', '1234567890')
+    # sns.create_user('7', 'steven', '1234', 'steven@uw.edu', '1234567890')
     # sns.delete_user("1")
     # sns.delete_user("2")
     # sns.delete_user("3")
+    # sns.delete_user("4")
     # sns.delete_user("5")
     # sns.delete_user("6")
     # sns.delete_user("7")
-    sns.close()
+    # user_info = sns.get_result('1')
+    # print(user_info)
+    # sns.close()
