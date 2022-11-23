@@ -1,5 +1,7 @@
 # system imports
 import os
+from os import getenv
+from os import environ
 from dotenv import load_dotenv 
 # Neo4j imports
 from neo4j import GraphDatabase
@@ -7,6 +9,17 @@ from neo4j import Result
 # custom imports
 from utils import encrypt
 
+# load secrets
+main_path = os.path.dirname(os.getcwd())
+env_path = os.path.join(main_path, '.env')
+load_dotenv(env_path)
+
+# load credentials and connect to Neo4j database
+n4j_uri = getenv('NEO4J_URI')
+n4j_user = getenv('NEO4J_USERNAME')
+n4j_pw = getenv('NEO4J_PASSWORD')
+
+print(n4j_pw)
 
 class UserNetwork:
     """The UserNetwork class...
@@ -138,6 +151,7 @@ if __name__ == "__main__":
     n4j_pw = os.getenv('NEO4J_PASSWORD')
     
     sns = UserNetwork(n4j_uri, n4j_user, n4j_pw)
+    
     # sns.create_user('1', 'haosen', '1234', 'haosen@uw.edu', '1234567890')
     # sns.create_user('2', 'andrew', '1234', 'andrew@uw.edu', '1234567890')
     # sns.create_user('3', 'peter', '1234', 'peter@uw.edu', '1234567890')
@@ -152,6 +166,6 @@ if __name__ == "__main__":
     # sns.delete_user("5")
     # sns.delete_user("6")
     # sns.delete_user("7")
-    # user_info = sns.get_result('1')
-    # print(user_info)
-    # sns.close()
+    user_info = sns.get_result('1')
+    print(user_info)
+    sns.close()
