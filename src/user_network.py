@@ -15,7 +15,7 @@ class UserNetwork:
         
         Returns:
             None.
-        
+
         Exceptions:
             Throws an exception if the connection to the database fails.
         """
@@ -93,20 +93,29 @@ class UserNetwork:
         
         
     def get_user(tx, user_id):
-        result = tx.run(f"MATCH (n: User{{user_id: '{user_id}'}}) RETURN (n)", user_id=user_id)
+        """Retrieve data from neo4j node"""
+        """
+        Args:
+            
+            user_info (dict): A dict containing additional information about the user.
+            
+        Returns:
+            None.
+        """ 
+        result = tx.run(f"MATCH (n: User{{user_id: '{user_id}'}}) RETURN (n.used_id)", user_id=user_id)
         return result
 
 if __name__ == "__main__":
     sns = UserNetwork('bolt://localhost:7687', 'neo4j', '1234')
-    # sns.create_user('1', 'haosen', '1234', 'hehehe')
-    # sns.create_user('2', 'andrew', '1234', 'hehehe')
-    # sns.create_user('3', 'peter', '1234', 'hehehe')
-    # sns.create_user('4', 'alan', '1234', 'hehehe')
-    # sns.create_user('5', 'anthony', '1234', 'hehehe')
-    # sns.create_user('6', 'hai dang', '1234', 'hehehe')
-    # sns.create_user('7', 'steven', '1234', 'hehehe')
-    # sns.delete_user('3')
-    sns.find_user('2')
+    sns.create_user('1', 'haosen', '1234', 'hehehe')
+    sns.create_user('2', 'andrew', '1234', 'hehehe')
+    sns.create_user('3', 'peter', '1234', 'hehehe')
+    sns.create_user('4', 'alan', '1234', 'hehehe')
+    sns.create_user('5', 'anthony', '1234', 'hehehe')
+    sns.create_user('6', 'hai dang', '1234', 'hehehe')
+    sns.create_user('7', 'steven', '1234', 'hehehe')
+    sns.delete_user('3')
+    # sns.find_user('2')
     # with sns.driver.session() as session:
     #     result = session.execute_read(sns.get_user, user_id='2')
     #     for r in result:
@@ -116,5 +125,5 @@ if __name__ == "__main__":
     # sns.delete_user("3")
     # sns.delete_user("5")
     # sns.delete_user("6")
-    sns.delete_user("7")
+    # sns.delete_user("7")
     sns.close()
