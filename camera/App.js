@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Button, Image } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, Image, ImageBackground } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { Camera, CameraType} from 'expo-camera';
 import { shareAsync } from 'expo-sharing';
@@ -9,9 +9,9 @@ export default function App() {
   let cameraRef = useRef();
   const [hasCameraPermission, setHasCameraPermission] = useState();
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
-  const [photo, setPhoto] = useState();
+  const [photo, setPhoto] = useState(undefined);
   const [type, setType] = useState(CameraType.back);
-  const [backPhoto, setBackPhoto] = useState();
+  const [backPhoto, setBackPhoto] = useState(undefined);
   const [backPhotoReady, setBackPhotoReady] = useState(false);
 
   useEffect(() => {
@@ -39,12 +39,11 @@ export default function App() {
       let newPhoto = await cameraRef.current.takePictureAsync(options);
       toggleCameraType();
       setPhoto(newPhoto);
-      //takePic();
     }
-    else if (!backPhoto) {
-      let otherPhoto = await cameraRef.current.takePictureAsync(options);
-      setBackPhoto(otherPhoto);
-    }
+    // else if (!backPhoto) {
+    //   let otherPhoto = await cameraRef.current.takePictureAsync(options);
+    //   setBackPhoto(otherPhoto);
+    // }
     
     
   };
@@ -64,11 +63,17 @@ export default function App() {
     
     return (
       <SafeAreaView style={styles.container}>
-        <Image style={styles.preview} source={{ uri: "data:image/jpg;base64," + photo.base64 }} />
+        <Image style={styles.preview} source={{ uri: "data:image/jpg;base64," + photo.base64 }}/>
+          
         <Image style={styles.preview} source={{ uri: "data:image/jpg;base64," + backPhoto.base64 }} />
+        
         <Button title="Share" onPress={sharePic} />
         {hasMediaLibraryPermission ? <Button title="Save" onPress={savePhoto} /> : undefined}
-        <Button title="Discard" onPress={() => setPhoto(undefined)} />
+        <Button title="Discard" onPress={() => {
+          setPhoto(undefined);
+          setBackPhoto(undefined);
+
+        }} />
       </SafeAreaView>
     );
   }
@@ -110,6 +115,14 @@ const styles = StyleSheet.create({
   },
   preview: {
     alignSelf: 'stretch',
-    flex: 1
-  }
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start'
+  }, 
+  smallPreview: {
+    alignSelf: 'flex-start',
+    aspectRatio: 0.5,
+    marginLeft: 50,
+  }, 
+
 });
