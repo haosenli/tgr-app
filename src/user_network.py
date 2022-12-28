@@ -1,25 +1,14 @@
 # system imports
 import os
-from os import getenv
-from os import environ
 from dotenv import load_dotenv 
 # Neo4j imports
 from neo4j import GraphDatabase
 from neo4j import Result
-# custom imports
-from utils import encrypt
+from neo4j import Record
+from neo4j import Driver
+# custom exceptions import
+from src.custom_exceptions import *
 
-# load secrets
-main_path = os.path.dirname(os.getcwd())
-env_path = os.path.join(main_path, '.env')
-load_dotenv(env_path)
-
-# load credentials and connect to Neo4j database
-n4j_uri = getenv('NEO4J_URI')
-n4j_user = getenv('NEO4J_USERNAME')
-n4j_pw = getenv('NEO4J_PASSWORD')
-
-print(n4j_pw)
 
 class UserNetwork:
     """The UserNetwork class...
@@ -38,19 +27,50 @@ class UserNetwork:
         Exceptions:
             Throws an exception if the connection to the database fails.
         """
-        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+        self.driver: Driver = GraphDatabase.driver(uri, auth=(user, password))
+        self._verify_driver()
+        self._verify_constraints()
+            
+    def _verify_driver(self) -> None:
+        """Verifies the driver connection to Neo4j."""
         try:
             self.driver.verify_connectivity()
             print('[SUCCESS] Connected to database successfully.')
         except Exception as e:
             print('[EXCEPTION] Connection to database failed.')
             print(e)
+            self.close_driver()
+            
+    def _verify_constraints(self) -> None:
+        """Ensures that constraints for unique user properties are added.
         
-    def _database_query(self, query: str) -> Result:
+        The following constraints are guaranteed:
+            - User.netid
+            - User.email
+            - User.phone
+        """
+        constraints = {
+            'UserNetIDUnique': 'netid',
+            'UserEmailUnique': 'email',
+            'UserPhoneUnique': 'phone',
+            }
+        for constraint, user_prop in constraints.items():
+            query = f'''
+                CREATE CONSTRAINT {constraint}
+                IF NOT EXISTS
+                FOR (user:User)
+                REQUIRE user.{user_prop} IS UNIQUE;
+            '''
+            self._database_query(query)
+        
+        
+    def _database_query(self, query: str, enable_msg: bool=False) -> Result:
         """Executes the given Cypher query.
         
         Args:
             command (str): The Cypher query to execute.
+            enable_msg (bool): Option to enable message logging in the console.
+                Defaults to False.
         
         Returns:
             Neo4j Result if successful, None otherwise.
@@ -62,110 +82,132 @@ class UserNetwork:
         with self.driver.session() as session:
             try:
                 result = session.run(query)
-                print(f'[SUCCESS] "{query}" has been executed.')
+                if enable_msg:
+                    print(f'[SUCCESS] "{query}" has been executed.')
             except Exception as e:
-                print(f'[EXCEPTION] "{query}" has caused an exception.')
+                if enable_msg:
+                    print(f'[EXCEPTION] "{query}" has caused an exception.')
                 print(e)
+                self.close_driver()
         return result
     
     def create_user(self, 
-                    uw_net_id: str,
                     username: str,
-                    password: str,
-                    uw_email: str,
-                    phone_num: str,
-                    user_info: dict[str, str]={}) -> None:
-        """Create a new user in the database.
+                    fullname: str,
+                    netid: str,
+                    email: str,
+                    phone: str) -> bool:
+        """Create a new user in the database and returns True if successful.
         
         Args:
-            uw_net_id (str): UW_Net id of the new user.
             username (str): The display name of the new user.
+            fullname (str): The full name of the new user (Last, First).
+            netid (str): A [unique] UW NetID of the new user.
             password (str): The password of the new user.
-            uw_email (str): The UW email of the new user.
-            phone_num (str): The phone number of the new user.
-            user_info (dict): A dict containing additional information about the user.
+            email (str): A [unique] email of the new user.
+            phone (str): A [unique] phone number of the new user.
             
         Returns:
-            None.
+            True if new user is successfully created, False otherwise.
         """
-        # TODO: Check if user exists
-        encrypted_pw = encrypt.password(password)
-        query = f"CREATE (u:User{{uw_netid: '{uw_net_id}', username: '{username}', password: '{encrypted_pw}', uw_email: '{uw_email}', phone_num: '{phone_num}'}})"
+        # check if user already exists
+        user = self.get_user(netid)
+        if user is not None:
+            print(f'[ERROR] User {user} already exists under the netID {netid}')
+            return False
+        query = f'''
+            CREATE (user:User{{
+                username: '{username}', 
+                fullname: '{fullname}', 
+                netid: '{netid}', 
+                email: '{email}', 
+                phone: '{phone}'
+                }})
+            '''
         self._database_query(query)
+        return True
 
-    def find_user(self, user_id: str):
-        query = f"MATCH (n: User{{user_id: '{user_id}'}}) RETURN (n)"
-        result = self._database_query(query)
-        print(result)
+    def get_user(self, netid: str=None, email: str=None, phone: str=None) -> dict:
+        """Returns all user information associated with the given 
+        netid, email, and/or phone. Returns None if no user matches.
+        
+        Args:
+            netid (str, optional): The netid of the user.
+            email (str, optional): The email of the user.
+            phone (str, optional): The phone number of the user.
+            
+        Returns:
+            A dict of information of the associated user, 
+            None if no users are associated with the given args.
+        """
+        # verify arguments
+        if not (netid or email or phone):
+            raise NoInputsException()
+        # helper method
+        def _get_user(tx):
+            props = []
+            if netid: props.append(f'netid: "{netid}"')
+            if email: props.append(f'email: "{email}"')
+            if phone: props.append(f'phone: "{phone}"')
+            query = f'''
+                MATCH (user:User{{{', '.join(props)}}})
+                RETURN user
+                '''
+            result: Record = tx.run(query)
+            data = result.data()
+            if data:
+                return data[0]['user']
+            return None
+        # start session
+        with self.driver.session() as session:
+            result = session.execute_read(_get_user)
+        return result
+    
+    def check_unique(self, netid: str=None, email: str=None, phone: str=None) -> bool:
+        # verify arguments
+        if not (netid or email or phone):
+            raise NoInputsException()
+        # helper method
+        def _check_unique(tx):
+            props = []
+            if netid: props.append(f'netid: "{netid}"')
+            if email: props.append(f'email: "{email}"')
+            if phone: props.append(f'phone: "{phone}"')
+            query = f'''
+                MATCH (user:User{{{', '.join(props)}}})
+                RETURN user.username AS username
+                '''
+            result: Record = tx.run(query)
+            return result.value('username', False)
+        # start session
+        with self.driver.session() as session:
+            result = session.execute_read(_check_unique)
+        return not bool(result)
 
-    def delete_user(self, user_id: str):
-        query = f"MATCH (n: User{{uw_netid: '{user_id}'}}) DELETE (n)"
+    def delete_user(self, netid: str) -> None:
+        """Deletes a user from the Neo4j database with the given netid."""
+        query = f"MATCH (user:User{{netid: '{netid}'}}) DELETE (user)"
         self._database_query(query)
-
-    def close(self):
+        
+    def connect_users(self, netid_0: str, netid_1: str) -> bool:
+        """Connects (friends) two users by their netid and returns 
+        True if they are connected successfully.
+        
+        Args:
+            netid_0 (str): The first netid.
+            netid_1 (str): The second netid.
+        
+        Returns:
+            True if the uesrs are connected successfully, False otherwise.
+        """
+        query = f'MATCH ('
+        self._database_query
+        
+    def close_driver(self) -> None:
         """Close the connection to the database."""
         try:
             self.driver.close()
-            print('[SUCCESS] Connection to database closed.')
+            print('[CLOSED] Connection to database closed.')
         except Exception as e:
-            print('[ERROR] Connection to database not closed.')
-        
-        
-    def get_user(tx, user_id):
-        """Retrieve data from neo4j node
-        
-        Args:
-            user_info (dict): A dict containing additional information about the user.
-            
-        Returns:
-            None.
-        """ 
-        result = tx.run(f"MATCH (n: User{{user_id: '{user_id}'}}) RETURN (n.used_id)", user_id=user_id)
-        return result.values("username")
-
-    def get_result(self, uw_netid: str):
-        def get_username(tx):
-            query = f'''
-                MATCH (n: User{{uw_netid: "{uw_netid}"}})
-                RETURN n.username AS username, n.uw_email AS email 
-                '''
-            result = tx.run(query)
-            keys = ['username', 'email']
-            results = []
-            for key in keys:
-                print(key)
-                results.append(result.value(key))
-            return results
-        with self.driver.session() as session:
-            result = session.execute_read(get_username)
-        return result
-        
-if __name__ == "__main__":
-    # load secrets
-    env_path = os.path.join(os.getcwd(), '.env')
-    load_dotenv(env_path)
-
-    # load credentials and connect to Neo4j database
-    n4j_uri = os.getenv('NEO4J_URI')
-    n4j_user = os.getenv('NEO4J_USERNAME')
-    n4j_pw = os.getenv('NEO4J_PASSWORD')
-    
-    sns = UserNetwork(n4j_uri, n4j_user, n4j_pw)
-    
-    # sns.create_user('1', 'haosen', '1234', 'haosen@uw.edu', '1234567890')
-    # sns.create_user('2', 'andrew', '1234', 'andrew@uw.edu', '1234567890')
-    # sns.create_user('3', 'peter', '1234', 'peter@uw.edu', '1234567890')
-    # sns.create_user('4', 'alan', '1234', 'alan@uw.edu', '1234567890')
-    # sns.create_user('5', 'anthony', '1234', 'anthony@uw.edu', '1234567890')
-    # sns.create_user('6', 'hai dang', '1234', 'haidang@uw.edu', '1234567890')
-    # sns.create_user('7', 'steven', '1234', 'steven@uw.edu', '1234567890')
-    # sns.delete_user("1")
-    # sns.delete_user("2")
-    # sns.delete_user("3")
-    # sns.delete_user("4")
-    # sns.delete_user("5")
-    # sns.delete_user("6")
-    # sns.delete_user("7")
-    user_info = sns.get_result('1')
-    print(user_info)
-    sns.close()
+            print('[ERROR] Connection to database not closed.')  
+            print(e)
