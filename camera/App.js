@@ -37,12 +37,20 @@ export default function App() {
     };
     if (!photo) {
       let newPhoto = await cameraRef.current.takePictureAsync(options);
-      toggleCameraType();
+      
+      
+      cameraRef.current.pausePreview();
       setPhoto(newPhoto);
+      toggleCameraType();
+      cameraRef.current.resumePreview();
+      setTimeout(async ()  => {
+        let otherPhoto = await cameraRef.current.takePictureAsync(options);
+      setBackPhoto(otherPhoto);
+      }, 1000);
+      
     }
     // else if (!backPhoto) {
-    //   let otherPhoto = await cameraRef.current.takePictureAsync(options);
-    //   setBackPhoto(otherPhoto);
+    //   
     // }
     
     
@@ -80,20 +88,9 @@ export default function App() {
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
-  let takeBackPhoto= async () => {
-    let options = {
-      quality: 1,
-      base64: true,
-      exif: false
-    };
-    if (!backPhoto && photo) {
-      let otherPhoto = await cameraRef.current.takePictureAsync(options);
-      setBackPhoto(otherPhoto);
-    }
-  }
   
   return (
-    <Camera style={styles.container} ref={cameraRef} type={type} onCameraReady={takeBackPhoto} >
+    <Camera style={styles.container} ref={cameraRef} type={type}  >
       <View style={styles.buttonContainer}>
         <Button title="Take Pic" onPress={takePic} />
         <Button title="Reverse" onPress={toggleCameraType}/>
