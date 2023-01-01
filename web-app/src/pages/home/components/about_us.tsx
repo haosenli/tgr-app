@@ -8,7 +8,7 @@ class WhoAreWe extends React.Component {
         return (
             <div id='about-us'>
                 <h3>ABOUT US</h3>
-                <p>We are a team of University of Washington students aiming to bring together the sense of community within college students through our social media platform, _together.</p>
+                <p>We are a team of University of Washington students aiming to bring together the sense of community within college students through our social networking platform, _tgr.</p>
                 <a href="#" id="meet-the-team"> 
                     <p>Meet the team. </p>
                     {/* RightArrow SVG */}

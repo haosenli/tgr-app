@@ -17,7 +17,6 @@ function TypeAnimation() {
           "Meet",
           "Party",
           "Drink",
-          "Sleep",
           "Live",
         ],
         autoStart: true,
