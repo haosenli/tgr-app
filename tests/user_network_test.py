@@ -6,7 +6,6 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 # system imports
-import os
 from dotenv import load_dotenv
 
 # unit testing 

@@ -1,10 +1,19 @@
+import sys # for import from parent directory
+import os # for import from parent directory
+
+# add src directory to path
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
 # system imports
-import os
 from dotenv import load_dotenv 
+
 # flask imports
 from flask import Flask
 from flask import request
 from flask import jsonify
+
 # custom imports
 from src.user_network import UserNetwork
 

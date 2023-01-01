@@ -1,11 +1,20 @@
+import sys # for import from parent directory
+import os # for import from parent directory
+
+# add src directory to path
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
 # system imports
-import os
 import json
 from dotenv import load_dotenv 
+
 # flask imports
 from flask import Flask
 from flask import request
 from flask import jsonify
+
 # custom imports
 from src.user_network import UserNetwork
 
@@ -23,7 +32,9 @@ n4j_pw = os.getenv('NEO4J_PASSWORD')
 users_db = UserNetwork(n4j_uri, n4j_user, n4j_pw)
 
 # load dummy data
-POSTS: list[dict] = json.load(os.path.join(os.getcwd(), 'tests\dummy_posts_data.json'))
+json_path = os.path.join(os.getcwd(), 'tests/dummy_posts_data.json')
+with open(json_path, 'r') as f:
+    POSTS: list[dict] = json.load(f)
 
 # web api routes
 @app.route('/api/create-user/', methods=['POST'])
@@ -54,7 +65,7 @@ def create_user():
     # create new user
     pass
 
-@app.route('/api/tests/posts', methods=['GET'])
+@app.route('/api/test/posts', methods=['GET'])
 def test_get_posts():
     return jsonify(posts=POSTS)
 
