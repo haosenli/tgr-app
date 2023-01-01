@@ -29,6 +29,12 @@ USERS = {
     7: ('steven', 'tran, steven', '7', 'steven@uw.edu', '7'),
 }
 
+FRIENDS = {
+    1: [2, 3, 4],
+    2: [1, 5, 6],
+    3: [5, 7],   
+}
+
 class UserNetworkTest(unittest.TestCase):
     """Performs unit testing on the UserNetwork class."""
     def __init__(self, methodName: str = ...) -> None:
@@ -49,13 +55,22 @@ class UserNetworkTest(unittest.TestCase):
     
     def _delete_all_users(self, network: UserNetwork) -> None:
         """Deletes all users from the network."""
-        network._database_query('MATCH (u:User) DELETE (u)')
+        network._database_query('MATCH ()-[f:Friend]-() DELETE (f)')
+        network._database_query('MATCH (user: User) DELETE (user)')
+        
+    def _add_all_friends(self, network: UserNetwork) -> bool:
+        """Connects all friends to the network."""
+        for user, friends in FRIENDS.items():
+            for friend in friends:
+                temp = network.connect_users(user, friend)
+                if not temp:
+                    return False
+        return True
         
     def test_get_user_no_input(self) -> None:
         """Verifies the get_user method."""
         network = UserNetwork(self.n4j_uri, self.n4j_user, self.n4j_pw)
         self.assertRaises(NoInputsException, network.get_user)
-        network.close_driver()
         
     def test_get_user_one_input(self) -> None:
         """Verifies the get_user method with one arg."""
@@ -63,13 +78,11 @@ class UserNetworkTest(unittest.TestCase):
         for netid, data in USERS.items():
             username = network.get_user(str(netid))['username']
             self.assertEqual(username, data[0])
-        network.close_driver()
     
     def test_check_unique(self) -> None:
-        """Verifies the check_unique method."""
+        """TODO: Verifies the check_unique method."""
         network = UserNetwork(self.n4j_uri, self.n4j_user, self.n4j_pw)
         is_unique = network.check_unique(netid='1')
-        print(is_unique)
 
     def test_create_and_verify_users(self) -> None:
         """Verifies the create_user and get_username_by_netid methods."""
@@ -80,8 +93,29 @@ class UserNetworkTest(unittest.TestCase):
         for netid, data in USERS.items():
             username = network.get_user(str(netid))['username']
             self.assertEqual(username, data[0])
-        network.close_driver()
-    
+        
+    def test_connect_users(self):
+        """Tests the connect_users method."""
+        network = UserNetwork(self.n4j_uri, self.n4j_user, self.n4j_pw)
+        self._delete_all_users(network)
+        self._add_all_users(network)
+        add_success = self._add_all_friends(network)
+        self.assertTrue(add_success)     
+        
+    def test_get_friends(self):
+        """Tests the get_friends method."""
+        network = UserNetwork(self.n4j_uri, self.n4j_user, self.n4j_pw)
+        self._delete_all_users(network)
+        self._add_all_users(network)
+        add_success = self._add_all_friends(network)
+        self.assertTrue(add_success)
+        for user, friends in FRIENDS.items():
+            n_friends = network.get_friends(str(user))
+            n_friends = set(n_friends)
+            for friend in friends:
+                if str(friend) not in n_friends:
+                    self.assertFalse(True)          
+            
     
 if __name__ == '__main__':
     unittest.main()

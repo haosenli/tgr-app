@@ -31,6 +31,20 @@ class UserNetwork:
         self._verify_driver()
         self._verify_constraints()
             
+    def __del__(self) -> None:
+        """Automatically disconnects the Neo4j driver connection on 
+        garbage collection or program end."""
+        self._close_driver()
+        
+    def _close_driver(self) -> None:
+        """Close the connection to the database."""
+        try:
+            self.driver.close()
+            print('[CLOSED] Connection to database closed.')
+        except Exception as e:
+            print('[ERROR] Connection to database not closed.')  
+            print(e)
+    
     def _verify_driver(self) -> None:
         """Verifies the driver connection to Neo4j."""
         try:
@@ -39,7 +53,6 @@ class UserNetwork:
         except Exception as e:
             print('[EXCEPTION] Connection to database failed.')
             print(e)
-            self.close_driver()
             
     def _verify_constraints(self) -> None:
         """Ensures that constraints for unique user properties are added.
@@ -62,7 +75,6 @@ class UserNetwork:
                 REQUIRE user.{user_prop} IS UNIQUE;
             '''
             self._database_query(query)
-        
         
     def _database_query(self, query: str, enable_msg: bool=False) -> Result:
         """Executes the given Cypher query.
@@ -88,7 +100,6 @@ class UserNetwork:
                 if enable_msg:
                     print(f'[EXCEPTION] "{query}" has caused an exception.')
                 print(e)
-                self.close_driver()
         return result
     
     def create_user(self, 
@@ -163,6 +174,20 @@ class UserNetwork:
             result = session.execute_read(_get_user)
         return result
     
+    def get_friends(self, netid: str) -> list[str]:
+        # helper method
+        def _get_friends(tx):
+            query = f'''
+                MATCH (user: User{{netid: '{netid}'}})-[:Friend]-(friend) 
+                RETURN friend.netid AS netid
+            '''
+            result: Record = tx.run(query)
+            return result.value('netid')
+        # start session
+        with self.driver.session() as session:
+            result = session.execute_read(_get_friends)
+        return result
+    
     def check_unique(self, netid: str=None, email: str=None, phone: str=None) -> bool:
         # verify arguments
         if not (netid or email or phone):
@@ -189,25 +214,29 @@ class UserNetwork:
         query = f"MATCH (user:User{{netid: '{netid}'}}) DELETE (user)"
         self._database_query(query)
         
-    def connect_users(self, netid_0: str, netid_1: str) -> bool:
-        """Connects (friends) two users by their netid and returns 
-        True if they are connected successfully.
+    def connect_users(self, sender_netid: str, recipient_netid: str) -> bool:
+        """Connect two users by their netid and returns True if they are 
+        connected successfully.
         
         Args:
-            netid_0 (str): The first netid.
-            netid_1 (str): The second netid.
+            sender_netid (str): The friend invite sender netid.
+            recipient_netid (str): The friend invite recipient netid.
         
         Returns:
             True if the uesrs are connected successfully, False otherwise.
         """
-        query = f'MATCH ('
-        self._database_query
-        
-    def close_driver(self) -> None:
-        """Close the connection to the database."""
-        try:
-            self.driver.close()
-            print('[CLOSED] Connection to database closed.')
-        except Exception as e:
-            print('[ERROR] Connection to database not closed.')  
-            print(e)
+        # check if users are already connected
+        friends = self.get_friends(sender_netid)
+        if recipient_netid in friends:
+            return False
+        query = f'''
+            MATCH 
+                (sender: User), (recipient: User)
+            WHERE
+                sender.netid = '{sender_netid}' AND recipient.netid = '{recipient_netid}'
+            CREATE
+                (sender)-[connect: Friend]->(recipient)
+        '''
+        self._database_query(query)
+        return True        
+    
