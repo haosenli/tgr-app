@@ -1,3 +1,3 @@
-dotenv
+python-dotenv
 flask
 neo4j
