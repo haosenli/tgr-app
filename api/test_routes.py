@@ -1,5 +1,6 @@
 # system imports
 import os
+import json
 from dotenv import load_dotenv 
 # flask imports
 from flask import Flask
@@ -20,6 +21,9 @@ n4j_uri = os.getenv('NEO4J_URI')
 n4j_user = os.getenv('NEO4J_USERNAME')
 n4j_pw = os.getenv('NEO4J_PASSWORD')
 users_db = UserNetwork(n4j_uri, n4j_user, n4j_pw)
+
+# load dummy data
+POSTS: list[dict] = json.load(os.path.join(os.getcwd(), 'tests\dummy_posts_data.json'))
 
 # web api routes
 @app.route('/api/create-user/', methods=['POST'])
@@ -49,6 +53,10 @@ def create_user():
 
     # create new user
     pass
+
+@app.route('/api/tests/posts', methods=['GET'])
+def test_get_posts():
+    return jsonify(posts=POSTS)
 
 
 # for testing purposes
