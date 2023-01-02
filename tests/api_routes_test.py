@@ -19,9 +19,11 @@ class APIRoutesTest(unittest.TestCase):
     """Performs unit testing on the UserNetwork class."""
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
-        self.base_url = 'http://192.9.131.11:5000/'
+        self.base_url = ''
         
-    def test_test_get_posts():
+    def test_get_posts(self):
+        url = self.base_url + '/api/get-posts/'
+        # payload
         requests.get()
     
 if __name__ == '__main__':
