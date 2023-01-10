@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Button, Image, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { Camera, CameraType} from 'expo-camera';
 import { shareAsync } from 'expo-sharing';
@@ -90,13 +90,20 @@ export default function App() {
   }
   
   return (
-    <Camera style={styles.container} ref={cameraRef} type={type}  >
+    <View style={styles.container}>
+        <Camera style={styles.camera} ref={cameraRef} type={type} borderRadius={15} resizeMode="cover" overflow="hidden" >
+      <StatusBar style="auto" />
+     
+      </Camera>
+      
       <View style={styles.buttonContainer}>
-        <Button title="Take Pic" onPress={takePic} />
+        <TouchableOpacity onPress={takePic}>
+          <View style={styles.ring}/>
+        </TouchableOpacity>
+        
         <Button title="Reverse" onPress={toggleCameraType}/>
       </View>
-      <StatusBar style="auto" />
-    </Camera>
+    </View>
   );
 }
 
@@ -105,10 +112,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'black'
   },
   buttonContainer: {
-    backgroundColor: '#fff',
-    alignSelf: 'flex-end'
+    flexDirection: 'row'
   },
   preview: {
     alignSelf: 'stretch',
@@ -121,5 +128,23 @@ const styles = StyleSheet.create({
     aspectRatio: 0.5,
     marginLeft: 50,
   }, 
+  camera: {
+    margin: 5,
+    width: "80%",
+    height: "50%",
+    overflow: 'hidden',
+    borderRadius: 150
+  },
+  ring: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "transparent",
+    borderColor: "white",
+    borderWidth: 5,
+    alignSelf: 'center', 
+    margin: 10,
+    justifyContent: 'center'
+  },
 
 });
